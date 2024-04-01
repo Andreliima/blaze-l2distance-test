@@ -1,0 +1,53 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.4'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	blazeVersion = '1.6.11'
+	querydslVersion = dependencyManagement.importedProperties['querydsl.version']
+	hibernateVersion = dependencyManagement.importedProperties['hibernate.version']
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	runtimeOnly 'org.postgresql:postgresql'
+
+	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+
+	implementation "org.hibernate.orm:hibernate-vector:${hibernateVersion}"
+	implementation group: "com.querydsl", name: "querydsl-jpa", version: "${querydslVersion}", classifier: "jakarta"
+	annotationProcessor group: "com.querydsl", name: "querydsl-apt", version: "${querydslVersion}", classifier: "jakarta"
+
+	implementation "com.blazebit:blaze-persistence-core-api-jakarta:${blazeVersion}"
+	runtimeOnly "com.blazebit:blaze-persistence-core-impl-jakarta:${blazeVersion}"
+	implementation "com.blazebit:blaze-persistence-integration-querydsl-expressions-jakarta:${blazeVersion}"
+	implementation "com.blazebit:blaze-persistence-integration-hibernate-6.2:${blazeVersion}"
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+	testImplementation 'org.testcontainers:postgresql:1.19.7'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
